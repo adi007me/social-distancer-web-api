@@ -1,0 +1,81 @@
+@html.extend('layout', function(model) {
+    @html.block('header', function(model) {        
+        <meta name="google-signin-client_id" content="<Your Google ID>">
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+        <style>
+            .hidden {
+                display: none;
+            }
+        </style>
+    })
+
+    @html.block('script', function (model) {
+        <script type="text/javascript">
+            async function getCurrentPosition() {
+                return new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(position => resolve(position), err => reject(err))
+                });
+            }
+
+            async function onSignIn(googleUser) {
+                let location = await getCurrentPosition();
+
+                console.log(location);
+
+                if (location) {
+                    var profile = googleUser.getBasicProfile();
+                    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+                    console.log('Name: ' + profile.getName());
+                    console.log('Image URL: ' + profile.getImageUrl());
+                    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+                    var id_token = googleUser.getAuthResponse().id_token;
+
+                    fetch(`/auth/loggedIn?token=${id_token}&latitude=${location.coords.latitude}&longitude=${location.coords.longitude}`)
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(json) {
+                            document.querySelector('#profilePic').src = json.pictureUrl;
+                            document.querySelector('#name').innerText = json.name;
+                            document.querySelector('#email').innerText = json.email;
+
+                            document.querySelector('#details').classList.toggle('hidden');
+                        })
+
+                } else {
+                    console.log('No Location');
+                }
+            }
+
+            function signOut() {
+                var auth2 = gapi.auth2.getAuthInstance();
+                auth2.signOut().then(function () {
+                    fetch('/auth/logout');
+                });
+            }
+        </script>
+    })
+    
+    @html.block('content', function(model) {
+        <h1>
+            Login
+        </h1>    
+
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+        <div class="hidden" id="details">
+            <img id="profilePic">
+            <div>
+                Name : <span id="name"></span>                
+            </div>
+
+            <div>
+                Email: <span id="email"></span>
+            </div>
+        </div>
+
+        <a href="#" onclick="signOut();">Sign out</a>
+    })
+})
