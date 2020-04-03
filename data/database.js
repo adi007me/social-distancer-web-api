@@ -1,6 +1,6 @@
 (async function (database){    
     const MongoClient = require('mongodb').MongoClient;
-    let mongoUrl = 'mongodb+srv://db:pwd@cluster0-oeiby.mongodb.net/test?retryWrites=true&w=majority';
+    let mongoUrl = 'mongodb+srv://socialdistancer:social123@cluster0-oeiby.mongodb.net/test?retryWrites=true&w=majority';
 
     const client = new MongoClient(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 

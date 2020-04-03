@@ -1,7 +1,7 @@
 (userData => {
     userData.init = (data) => {
 
-        const database = require('./database');
+        const database = require('../database');
 
         async function getUser(userId) {
             const db = await database.getDb();
@@ -23,10 +23,19 @@
             }
         }
 
+        async function addBooking(userId, slot, hash) {
+            const db = await database.getDb();
+
+            return await db.users.update(
+                { "userId": userId },
+                { $push: {"bookings": {"slot": slot, "hash": hash, "date": new Date()} } },
+            );
+        }
 
         data.user = {
             getUser,
-            addUser
+            addUser,
+            addBooking
         }
 
     } 

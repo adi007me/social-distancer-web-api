@@ -1,29 +1,24 @@
 ((bookingService) => {
     bookingService.init = (app) => {
         const authModule = require('./../../modules/auth-module');
+        const bookingModule = require('../../modules/booking-module');
         
-        app.post('/booking', authModule.isLoggedIn, (req, res) => {
-            const newBooking = req.body;
+        app.post('/booking', authModule.isLoggedIn, async (req, res) => {
+            const slot = req.body.slot;
+            const user =  req.currentUser;
 
-            throw "Not Implemented";
+            if (Number.isInteger(slot) && slot < 23 && slot > -1) {
+                try {
+                    const result = await bookingModule.addBooking(user.email, user.groupId, slot);
 
-            if (!req.currentUser) {
-                res.status(401).send("Unauthorized");
-                
-                return;
-            }
-            
-            if (newBooking.slot && newBooking.date) {
-                // create a booking in Mongo DB
-                // send 201 response
-
-
-                res.status(201).send(newBooking);
+                    res.sendStatus(201);
+                } catch (err) {
+                    console.log(err);
+                    res.status(500).send(err);
+                }
             } else {
-                console.log('Incomplete Request', req.body);
-
                 res.status(400).send('Incomplete request');
-            }            
+            }
         });
 
         app.delete('/booking/:id', authModule.isLoggedIn, (req, res) => {

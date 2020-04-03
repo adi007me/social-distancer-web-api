@@ -1,22 +1,17 @@
 (bookingModule => {
-    const groupsData = require('../../data').groups;
-    const constants = require('../../constants');
+    const data = require('../../data');
+    const cryptoModule = require('../crypto-module');
 
-    function addBooking(user, group, slot, date) {
-        //Get group from groups collection in db
-        const group = groupsData.getGroup(user.groupId);
-
-        //Check if there is space left
-        if (group.slots && group.slots.length < constants.allowedCount) {
-            //If yes then 
-            //1. Insert userId/guid in the booking array
-            
-            //2. Insert slot under booking array of user object along with booking id
-            //3. return booking id
-        }
-
+    async function addBooking(userId, groupId, slot) {
+        const hash = cryptoModule.encrypt(`${userId}:${groupId}:${slot}`);
         
-        
+        const result = await data.groups.addBooking(groupId, slot, hash);
+
+        if (result && result.nModified) {
+            return await data.user.addBooking(userId, slot, hash)
+        } else {
+            throw {type: 'enexpected-error-in-booking.addBooking'}
+        }        
     }
 
     function deleteBooking(user, bookingId) {
@@ -24,4 +19,7 @@
         //1. booking collection
         //2. from user's booking array. just mark as inactive 
     }
+
+    bookingModule.addBooking = addBooking;
+
 })(module.exports);

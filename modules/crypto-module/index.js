@@ -2,7 +2,7 @@
     const crypto = require('crypto');
 
     cryptoModule.encrypt = (data) => {      
-        const cipher = crypto.createCipher('aes-192-cbc', 'simaya-travels-key');
+        const cipher = crypto.createCipher('aes-192-cbc', 'social-distancer-key');
 
         let cipherUser = cipher.update(data, 'utf8', 'hex');
 
@@ -12,7 +12,7 @@
     };
 
     cryptoModule.decrypt = (encryptedData) => {
-        const deCipher = crypto.createDecipher('aes-192-cbc', 'simaya-travels-key');
+        const deCipher = crypto.createDecipher('aes-192-cbc', 'social-distancer-key');
         let user = deCipher.update(encryptedData, 'hex', 'utf8');
 
         user += deCipher.final('utf8');
