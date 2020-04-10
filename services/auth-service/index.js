@@ -44,8 +44,6 @@
 
                     const userCreated = await userModule.createOrGetUser(user, location);
 
-                    console.log(userCreated);
-
                     user.groupId = userCreated.group;
                         
                     const encryptedUser = cryptoModule.encrypt(JSON.stringify(user));

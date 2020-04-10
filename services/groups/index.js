@@ -1,7 +1,5 @@
 ((groupsService) => {
     groupsService.init = (app) => {
-        console.log('Init Groups');
-
         const groupsModule = require('../../modules/groups-module');
 
         app.get('/groups', (req, res) => {

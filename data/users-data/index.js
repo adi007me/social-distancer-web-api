@@ -32,10 +32,21 @@
             );
         }
 
+        async function deleteBooking(userId, hash) {
+            const db = await database.getDb();
+
+            return await db.users.update(
+                { "userId" : userId }, 
+                { "$set" : { "bookings.$[elem].cancelled": true } },
+                { arrayFilters: [ { "elem.hash": hash } ] }
+            );
+        }
+
         data.user = {
             getUser,
             addUser,
-            addBooking
+            addBooking,
+            deleteBooking
         }
 
     } 
