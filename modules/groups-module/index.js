@@ -1,5 +1,6 @@
 ((groupsModule) => {   
     const slotsHelper = require('./slotsHelper'); 
+    const groupData = require('../../data').groups;
 
     const slots = slotsHelper.getInitialSlots();
     
@@ -37,7 +38,7 @@
         }
     }
 
-    function getInistalGroups() {
+    function getInitialGroups() {
         return groups;
     }
 
@@ -54,7 +55,19 @@
         }
     }
 
-    groupsModule.getInistalGroups = getInistalGroups;
+    async function getGroupWithSlotCount(groupId) {
+        const group = await groupData.getGroup(groupId);
+        
+        const slots = group.slots.map(s => s.length);
+
+        return {
+            id: group.id,
+            slots: slots
+        };
+    }
+
+    groupsModule.getInitialGroups = getInitialGroups;
     groupsModule.findGroupId = findGroupId;
+    groupsModule.getGroupWithSlotCount = getGroupWithSlotCount;
 
 })(module.exports);

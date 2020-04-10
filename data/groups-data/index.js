@@ -14,10 +14,10 @@
         async function getGroup(groupId) {
             const db = await database.getDb();
 
-            const group = await db.groups.find({id: groupId});
+            const group = await db.groups.find({id: groupId}).toArray();
 
-            if (group) {
-                return group;
+            if (group.length) {
+                return group[0];
             } else {
                 throw {type: 'group-not-found'};
             }
