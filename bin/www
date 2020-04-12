@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('simaya-travels-app:server');
+var debug = require('debug')('social-distancer-app:server');
 var http = require('http');
 
 /**

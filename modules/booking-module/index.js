@@ -1,27 +1,30 @@
 (bookingModule => {
-    const groupsData = require('../../data').groups;
-    const constants = require('../../constants');
+    const data = require('../../data');
+    const cryptoModule = require('../crypto-module');
 
-    function addBooking(user, group, slot, date) {
-        //Get group from groups collection in db
-        const group = groupsData.getGroup(user.groupId);
+    async function addBooking(userId, groupId, slot) {
+        const hash = cryptoModule.encrypt(`${userId}:${groupId}:${slot}:${new Date().toDateString()}`);
+        
+        const result = await data.groups.addBooking(groupId, slot, hash);
 
-        //Check if there is space left
-        if (group.slots && group.slots.length < constants.allowedCount) {
-            //If yes then 
-            //1. Insert userId/guid in the booking array
-            
-            //2. Insert slot under booking array of user object along with booking id
-            //3. return booking id
+        if (result && result.nModified) {
+            return await data.user.addBooking(userId, slot, hash)
+        } else {
+            throw {type: 'unexpected-error-in-booking.addBooking'}
+        }        
+    }
+
+    async function deleteBooking(userId, groupId, slot, hash) {
+        const result = await data.groups.deleteBooking(groupId, slot, hash);
+
+        if (result && result.nModified) {
+            return await data.user.deleteBooking(userId, hash);
+        } else {
+            throw {type: 'unexpected-error-in-booking.deleteBooking'}
         }
-
-        
-        
     }
 
-    function deleteBooking(user, bookingId) {
-        // if exists, delete booking id from
-        //1. booking collection
-        //2. from user's booking array. just mark as inactive 
-    }
+    bookingModule.addBooking = addBooking;
+    bookingModule.deleteBooking = deleteBooking;
+
 })(module.exports);

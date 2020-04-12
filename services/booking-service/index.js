@@ -1,51 +1,51 @@
 ((bookingService) => {
     bookingService.init = (app) => {
         const authModule = require('./../../modules/auth-module');
+        const bookingModule = require('../../modules/booking-module');
         
-        app.post('/booking', authModule.isLoggedIn, (req, res) => {
-            const newBooking = req.body;
+        app.post('/booking', authModule.isLoggedIn, async (req, res) => {
+            const slot = req.body.slot;
+            const user =  req.currentUser;
 
-            throw "Not Implemented";
+            if (Number.isInteger(slot) && slot <= 23 && slot > -1) {
+                try {
+                    await bookingModule.addBooking(user.email, user.groupId, slot);
 
-            if (!req.currentUser) {
-                res.status(401).send("Unauthorized");
-                
-                return;
-            }
-            
-            if (newBooking.slot && newBooking.date) {
-                // create a booking in Mongo DB
-                // send 201 response
-
-
-                res.status(201).send(newBooking);
+                    res.sendStatus(201);
+                } catch (err) {
+                    console.log(err);
+                    res.status(500).send(err);
+                }
             } else {
-                console.log('Incomplete Request', req.body);
-
                 res.status(400).send('Incomplete request');
-            }            
+            }
         });
 
-        app.delete('/booking/:id', authModule.isLoggedIn, (req, res) => {
-            const newBooking = req.body;
-            const bookingId = req.params.id;
+        app.options('/booking', async (req, res) => {
+            res.sendStatus(200);
+        });
 
-            throw "Not Implemented";
+        app.options('/booking/:slot', async (req, res) => {
+            res.sendStatus(200);
+        });
 
-            // fetch the booking by booking id from DB
-            let booking = {};
-            
-            if (booking) {
-                // update only fields that are modified in the request 
-                // update in DB
-                // send 200 status
+        app.delete('/booking/:slot', authModule.isLoggedIn, async (req, res) => {
+            const slot = parseInt(req.params.slot, 10);
+            const hash = req.query.hash;
+            const user =  req.currentUser;
 
-                res.status(201).send(booking);
+            if (Number.isInteger(slot) && slot <= 23 && slot > -1 && hash) {
+                try {
+                    await bookingModule.deleteBooking(user.email, user.groupId, slot, hash);
+
+                    res.sendStatus(204);
+                } catch (err) {
+                    console.log(err);
+                    res.status(500).send(err);
+                }
             } else {
-                console.log('Booking not found to update', req.params, req.body);
-
-                res.status(400).send('Bad Request');
-            }            
+                res.status(400).send('Incomplete request');
+            }
         });
     };
 })(module.exports);

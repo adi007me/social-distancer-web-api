@@ -1,5 +1,5 @@
 (constants => {
     constants.cookieName = 'social-distancer';
 
-    constants.allowedCount = 10;
+    constants.maxBookingAllowedPerGroup = 10;
 })(module.exports);
