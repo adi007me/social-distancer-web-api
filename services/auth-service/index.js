@@ -19,6 +19,12 @@
             res.status(200).send('OK');
         });
 
+        app.get('/auth/currentuser', authModule.isLoggedIn, async (req, res) => {
+            const user = await userModule.getUser(req.currentUser.email).catch(err => console.log(err));
+
+            res.status(200).send(user);
+        });
+
         app.get('/auth/loggedIn', async (req, res) => {
             const token = req.query.token;
             const latitude = req.query.latitude;
@@ -30,32 +36,24 @@
             }
 
             authModule.authenticate(token).then(async (user) => {
-                if (req.currentUser) {
-                    if (req.currentUser.userid !== user.userid) {
-                        res.status(401).send('Unauthorized');
-                    } else {
-                        res.status(200).send(user);
-                    }
-                } else {
-                    if (!location.x || !location.y) {
-                        res.status(400).send({type:"no-location", description: "Location not provided"});
-                        return;
-                    }
-
-                    const userCreated = await userModule.createOrGetUser(user, location);
-
-                    user.groupId = userCreated.group;
-                        
-                    const encryptedUser = cryptoModule.encrypt(JSON.stringify(user));
-
-                    var expirationDate = new Date();
-
-                    expirationDate.setDate(expirationDate.getDate() + 1);
-
-                    res.cookie(constants.cookieName, encryptedUser, {expires: expirationDate});
-
-                    res.status(200).send(userCreated);
+                if (!location.x || !location.y) {
+                    res.status(400).send({type:"no-location", description: "Location not provided"});
+                    return;
                 }
+
+                const userCreated = await userModule.createOrGetUser(user, location);
+
+                user.groupId = userCreated.group;
+                    
+                const encryptedUser = cryptoModule.encrypt(JSON.stringify(user));
+
+                var expirationDate = new Date();
+
+                expirationDate.setDate(expirationDate.getDate() + 1);
+
+                res.cookie(constants.cookieName, encryptedUser, {expires: expirationDate});
+
+                res.status(200).send(userCreated);                
             });
         });
     };

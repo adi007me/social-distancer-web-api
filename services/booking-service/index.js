@@ -7,7 +7,7 @@
             const slot = req.body.slot;
             const user =  req.currentUser;
 
-            if (Number.isInteger(slot) && slot < 23 && slot > -1) {
+            if (Number.isInteger(slot) && slot <= 23 && slot > -1) {
                 try {
                     await bookingModule.addBooking(user.email, user.groupId, slot);
 
@@ -21,12 +21,20 @@
             }
         });
 
+        app.options('/booking', async (req, res) => {
+            res.sendStatus(200);
+        });
+
+        app.options('/booking/:slot', async (req, res) => {
+            res.sendStatus(200);
+        });
+
         app.delete('/booking/:slot', authModule.isLoggedIn, async (req, res) => {
             const slot = parseInt(req.params.slot, 10);
             const hash = req.query.hash;
             const user =  req.currentUser;
 
-            if (Number.isInteger(slot) && slot < 23 && slot > -1 && hash) {
+            if (Number.isInteger(slot) && slot <= 23 && slot > -1 && hash) {
                 try {
                     await bookingModule.deleteBooking(user.email, user.groupId, slot, hash);
 

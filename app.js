@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const data = require('./data');
 const services = require('./services');
@@ -31,6 +32,20 @@ app.use(bodyParser.json());
 app.use(express.json());
 
 app.use(authModule.setCurrentUser);
+
+app.use(function setHeaders(req, res, next) {
+  //TODO : Update Origin to allow only one host
+  if (req.headers.origin) {
+      res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+  }
+  
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Methods", "DELETE");
+
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  
+  next();
+});
 
 services.init(app);
 

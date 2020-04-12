@@ -17,7 +17,11 @@
     }
 
     async function createDbObject() {
-        await client.connect();
+        await client.connect().catch(err => {
+            console.log(err);
+
+            throw err;
+        });
 
         const dbObject = client.db(dbName);
                         
