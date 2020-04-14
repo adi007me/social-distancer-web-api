@@ -58,6 +58,8 @@
     async function getGroupWithSlotCount(groupId) {
         const group = await groupData.getGroup(groupId);
         
+        console.log(group);
+
         const slots = group.slots.map(s => s.length);
 
         return {

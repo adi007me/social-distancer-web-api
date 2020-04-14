@@ -8,12 +8,12 @@
     authModule.authenticate = (token) => {
         return new Promise((resolve, reject) => {
             const {OAuth2Client} = require('google-auth-library');
-            const client = new OAuth2Client('1073134485505-v9sktlqljqpq7t5pq9e6e1u9gkhi2alp.apps.googleusercontent.com');
+            const client = new OAuth2Client('1076952200464-ctrb4np06dpvut38hnbjqcm6tf3tr3bt.apps.googleusercontent.com');
 
             async function verify() {
                 const ticket = await client.verifyIdToken({
                     idToken: token,
-                    audience: '1073134485505-v9sktlqljqpq7t5pq9e6e1u9gkhi2alp.apps.googleusercontent.com',
+                    audience: '1076952200464-ctrb4np06dpvut38hnbjqcm6tf3tr3bt.apps.googleusercontent.com',
                 });
                 const payload = ticket.getPayload();
 
