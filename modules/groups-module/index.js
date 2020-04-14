@@ -5,12 +5,12 @@
     const slots = slotsHelper.getInitialSlots();
     
     let groups = {};
-    const startX = 18.64;
-    const startY = 73.72;
-    const endX = 18.6625;
-    const endY = 73.76;
-    const stepX = 0.0025;
-    const stepY = 0.0025;
+    const startX = 15.15961;
+    const startY = 73.04807;
+    const endX = 21.94557;
+    const endY = 80.78244;
+    const stepX = 0.0100;
+    const stepY = 0.0100;
 
     const xSteps = Math.ceil(Math.abs(startX - endX)/stepX);
     const ySteps = Math.ceil(Math.abs(startY - endY)/stepY);

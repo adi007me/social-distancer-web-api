@@ -4,13 +4,14 @@
         const authModule = require('./../../modules/auth-module');
 
         app.get('/groups', (req, res) => {
-            let groups = groupsModule.getInitialGroups();
+            // let groups = groupsModule.getInitialGroups();
 
-            for (let g in groups) {
-                delete groups[g].slots;
-            }
+            // for (let g in groups) {
+            //     delete groups[g].slots;
+            // }
 
-            res.status(200).send(groups);
+            // res.status(200).send(groups);
+            res.status(500).send("Not Implemented");
         });
 
         app.get('/group/counts', authModule.isLoggedIn, async (req, res) => {
